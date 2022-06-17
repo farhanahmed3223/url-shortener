@@ -1,33 +1,8 @@
-# Python
 __pycache__/
-*.py[cod]
-*.pyo
+*.pyc
+.env
 .venv/
-venv/
-*.egg-info/
-dist/
-.pytest_cache/
-
-# Node
 node_modules/
 .next/
-out/
-*.tsbuildinfo
-.vercel/
-
-# Env
-.env
-.env.local
-.env.*.local
-
-# Docker
-*.log
-
-# OS
-.DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
-*.swp
+*.egg-info/
+dist/
