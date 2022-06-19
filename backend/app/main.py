@@ -1,26 +1,27 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.responses import RedirectResponse
+from sqlalchemy.orm import Session
+from app.db.session import get_db, create_tables
+from app.db.models import Link
+from app.core.shortener import generate_short_code
 
 app = FastAPI(title="URL Shortener")
-_links = {}
-
-@app.get("/")
-def root():
-    return {"message": "url shortener"}
+create_tables()
 
 @app.post("/shorten")
-def shorten(url: str):
-    import random, string
-    code = "".join(random.choices(string.ascii_lowercase, k=6))
-    _links[code] = url
-    return {"short": f"http://localhost:8000/r/{code}"}
+def shorten(url: str, db: Session = Depends(get_db)):
+    code = generate_short_code()
+    link = Link(short_code=code, original_url=url)
+    db.add(link)
+    db.commit()
+    return {"short_code": code, "url": f"http://localhost:8000/r/{code}"}
 
 @app.get("/r/{code}")
-def redirect(code: str):
-    url = _links.get(code)
-    if not url:
+def redirect(code: str, db: Session = Depends(get_db)):
+    link = db.query(Link).filter(Link.short_code == code).first()
+    if not link:
         return {"error": "not found"}
-    return RedirectResponse(url=url)
+    return RedirectResponse(url=link.original_url)
 
 @app.get("/health")
 def health():
