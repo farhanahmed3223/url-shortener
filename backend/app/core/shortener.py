@@ -5,5 +5,7 @@ def generate_short_code(length: int = 7) -> str:
     return "".join(random.choices(chars, k=length))
 
 def validate_custom_slug(slug: str) -> bool:
-    # TODO: proper validation
-    return bool(slug) and len(slug) >= 3
+    if not slug:
+        return False
+    pattern = r'^[a-zA-Z0-9][a-zA-Z0-9\-]{1,18}[a-zA-Z0-9]$|^[a-zA-Z0-9]{3,20}$'
+    return bool(re.match(pattern, slug)) and 3 <= len(slug) <= 20
