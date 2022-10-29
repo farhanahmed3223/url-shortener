@@ -15,6 +15,7 @@ def _int_to_base62(n: int, length: int = 7) -> str:
     return code[:length].ljust(length, BASE62_CHARS[0])
 
 def generate_short_code(url: str, length: int = 7) -> str:
+    """Collision-safe: hash of url + nanosecond timestamp."""
     seed = f"{url}{time.time_ns()}"
     return _int_to_base62(_sha256_to_int(seed), length)
 
