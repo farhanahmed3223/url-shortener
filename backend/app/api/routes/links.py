@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func
 from typing import Optional
 from app.db.session import get_db
-from app.db.models import Link
+from app.db.models import Link, Click
 from app.core.shortener import generate_short_code, validate_custom_slug
 from app.core.redis import get_redis
 
@@ -26,8 +26,10 @@ async def create_link(url: str, custom_slug: Optional[str] = None, db: AsyncSess
     return {"short_code": code}
 
 @router.get("")
-async def list_links(db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(Link).order_by(Link.created_at.desc()))
+async def list_links(page: int = 1, page_size: int = 20, db: AsyncSession = Depends(get_db)):
+    # fix: offset calculation was off by one (page-1, not page)
+    offset = (page - 1) * page_size
+    result = await db.execute(select(Link).order_by(Link.created_at.desc()).offset(offset).limit(page_size))
     return result.scalars().all()
 
 @router.delete("/{code}", status_code=204)
