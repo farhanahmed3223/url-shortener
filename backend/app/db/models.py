@@ -1,14 +1,8 @@
-from sqlalchemy import Column, String, Boolean, DateTime, Date, ForeignKey, Integer, func, Table
+from sqlalchemy import Column, String, Boolean, DateTime, Date, ForeignKey, Integer, func
 from sqlalchemy.orm import relationship, DeclarativeBase
 
 class Base(DeclarativeBase):
     pass
-
-link_tags = Table(
-    "link_tags", Base.metadata,
-    Column("link_id", Integer, ForeignKey("links.id"), primary_key=True),
-    Column("tag", String(50), primary_key=True),
-)
 
 class User(Base):
     __tablename__ = "users"
@@ -26,6 +20,9 @@ class Link(Base):
     custom_slug = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     expires_at = Column(DateTime(timezone=True), nullable=True)
+    preview_title = Column(String(512), nullable=True)
+    preview_description = Column(String(1024), nullable=True)
+    preview_image = Column(String(2048), nullable=True)
     owner = relationship("User", back_populates="links")
     clicks = relationship("Click", back_populates="link", cascade="all, delete-orphan")
 
