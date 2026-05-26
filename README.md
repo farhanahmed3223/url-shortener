@@ -1,13 +1,5 @@
 # 🔗 Snip — URL Shortener
 
-**[🚀 Live demo → snip.yourdomain.app](https://snip.yourdomain.app)**
-
-> Replace the link above with your actual deployment URL before sharing.
-
-![Home page screenshot](docs/screenshot-home.png)
-![Dashboard screenshot](docs/screenshot-dashboard.png)
-
----
 
 ## What it is
 
